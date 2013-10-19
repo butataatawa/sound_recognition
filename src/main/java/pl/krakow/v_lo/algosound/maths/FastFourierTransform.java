@@ -48,22 +48,18 @@ public class FastFourierTransform
       {
         Complex omega;
         if(reverse)
-        {
-          omega = new Complex(0, 2 * Math.PI * i / size);
-          omega = omega.exp();
-        }
+          omega = new Complex(0, (2) * Math.PI * i / size);
         else
-        {
           omega = new Complex(0, (-2) * Math.PI * i / size);
-          omega = omega.exp();
-        }
+        omega = omega.exp();
+        
         Complex temp = resultOfPart1.get(i);
-        result.set(i, temp.add(omega).multiply(resultOfpart2.get(i)));
-        result.set(i + size / 2, temp.subtract(omega).multiply(resultOfpart2.get(i)));
+        result.set(i, temp.add(omega.multiply(resultOfpart2.get(i))));
+        result.set(i + size / 2, temp.subtract(omega.multiply(resultOfpart2.get(i))));
         if(reverse)
         {
-          result.set(i, result.get(i).subtract(2));
-          result.set(i + size / 2, result.get(i + size / 2).subtract(2));
+          result.set(i, result.get(i).divide(2));
+          result.set(i + size / 2, result.get(i + size / 2).divide(2));
         }
       }
     }

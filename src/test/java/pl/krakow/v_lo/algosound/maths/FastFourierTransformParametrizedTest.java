@@ -12,6 +12,7 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import org.apache.commons.math3.complex.Complex;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -24,6 +25,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class FastFourierTransformParametrizedTest
 {
 
+  public static final double DELTA = 1e-2;
+  
   Vector<Complex> inputData;
   Vector<Complex> expectedOutput;
 
@@ -77,10 +80,13 @@ public class FastFourierTransformParametrizedTest
   {
     FastFourierTransform transform = new FastFourierTransform(inputData);
     transform.transformForward();
-    FastFourierTransform second = new FastFourierTransform(transform.getResult());
-    second.transformBackward();
-    assertEquals("Transforming forward and then backward should result in the same vector", inputData,
-        second.getResult());
+    transform.transformBackward();
+    Vector<Complex> result = transform.getResult();
+    for(int i = 0; i < expectedOutput.size(); ++i)
+    {
+      assertEquals(inputData.get(i).getReal(), result.get(i).getReal(), DELTA);
+      assertEquals(inputData.get(i).getImaginary(), result.get(i).getImaginary(), DELTA);
+    }
   }
   
   @Test
@@ -91,8 +97,8 @@ public class FastFourierTransformParametrizedTest
     Vector<Complex> result = transform.getResult();
     for(int i = 0; i < result.size(); ++i)
     {
-      assertEquals(expectedOutput.get(i).getReal(), result.get(i).getReal(), 10e-6);
-      assertEquals(expectedOutput.get(i).getImaginary(), result.get(i).getImaginary(), 10e-6);
+      assertEquals(expectedOutput.get(i).getReal(), result.get(i).getReal(), DELTA);
+      assertEquals(expectedOutput.get(i).getImaginary(), result.get(i).getImaginary(), DELTA);
     }
   }
 }
