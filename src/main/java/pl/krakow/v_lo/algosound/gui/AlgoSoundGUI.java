@@ -75,14 +75,15 @@ public class AlgoSoundGUI extends JFrame
         }
         catch (InterruptedException e)
         {
-          Thread.currentThread().interrupt();
+          e.printStackTrace();
+          // Thread.currentThread().interrupt();
         }
         soundRecorder.stopRecording();
       }
     });
     innerPanel.add(record);
-    
-    final AlgoSoundGUI THIS = this; 
+
+    final AlgoSoundGUI THIS = this;
     JButton play = new JButton("Play");
     play.addActionListener(new ActionListener()
     {
@@ -106,10 +107,10 @@ public class AlgoSoundGUI extends JFrame
       }
     });
     innerPanel.add(play);
-    
+
     JButton match = new JButton("Match");
     innerPanel.add(match);
-    
+
     panel.add(innerPanel, BorderLayout.EAST);
   }
 

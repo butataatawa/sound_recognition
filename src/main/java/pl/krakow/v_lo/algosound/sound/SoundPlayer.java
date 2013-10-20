@@ -72,8 +72,9 @@ public class SoundPlayer
       {
         line.write(data, 0, nBytesRead);
       }
-      line.close();
     }
+    line.drain();
+    line.close();
   }
 
 }
