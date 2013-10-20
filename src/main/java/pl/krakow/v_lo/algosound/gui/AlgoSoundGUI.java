@@ -2,20 +2,24 @@ package pl.krakow.v_lo.algosound.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import pl.krakow.v_lo.algosound.sound.SoundPlayer;
+import pl.krakow.v_lo.algosound.sound.SoundRecorder;
 
 /**
  * Hello world!
@@ -63,13 +67,44 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        // TODO Auto-generated method stub
-        
+        SoundRecorder soundRecorder = new SoundRecorder(new File("./command.wav"));
+        soundRecorder.startRecording();
+        try
+        {
+          Thread.sleep(1500);
+        }
+        catch (InterruptedException e)
+        {
+          Thread.currentThread().interrupt();
+        }
+        soundRecorder.stopRecording();
       }
     });
     innerPanel.add(record);
     
+    final AlgoSoundGUI THIS = this; 
     JButton play = new JButton("Play");
+    play.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        File soundFile = new File("./command.wav");
+        BufferedInputStream sound = null;
+        try
+        {
+          FileInputStream tmp = new FileInputStream(soundFile);
+          sound = new BufferedInputStream(tmp);
+        }
+        catch (FileNotFoundException e1)
+        {
+          JOptionPane.showMessageDialog(THIS, "You need to record command first.");
+          return;
+        }
+        SoundPlayer soundPlayer = new SoundPlayer(sound);
+        soundPlayer.playSound();
+      }
+    });
     innerPanel.add(play);
     
     JButton match = new JButton("Match");
