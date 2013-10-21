@@ -1,8 +1,8 @@
 package pl.krakow.v_lo.algosound.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -18,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import pl.krakow.v_lo.algosound.AlgoSound;
 import pl.krakow.v_lo.algosound.sound.SoundPlayer;
 import pl.krakow.v_lo.algosound.sound.SoundRecorder;
 
@@ -32,9 +35,12 @@ public class AlgoSoundGUI extends JFrame
    */
   private static final long      serialVersionUID = -8821408889675820562L;
   private static final Dimension appDimension     = new Dimension(800, 600);
+  private final AlgoSoundGUI     THIS             = this;
+  private AlgoSound              algoSound;
 
-  public AlgoSoundGUI()
+  public AlgoSoundGUI(AlgoSound algoSound)
   {
+    this.algoSound = algoSound;
     initializeUI();
   }
 
@@ -59,8 +65,10 @@ public class AlgoSoundGUI extends JFrame
 
   private void initializeEast(JPanel panel)
   {
-    GridLayout gridLayout = new GridLayout(3, 1);
-    JPanel innerPanel = new JPanel(gridLayout);
+    JPanel innerPanel = new JPanel();
+    BoxLayout boxLayout = new BoxLayout(innerPanel, BoxLayout.Y_AXIS);
+    innerPanel.setLayout(boxLayout);
+
     JButton record = new JButton("Record");
     record.addActionListener(new ActionListener()
     {
@@ -80,11 +88,20 @@ public class AlgoSoundGUI extends JFrame
         soundRecorder.stopRecording();
       }
     });
-    innerPanel.add(record);
-    
-    final AlgoSoundGUI THIS = this; 
-    JButton play = new JButton("Play");
-    play.addActionListener(new ActionListener()
+
+    JButton match = new JButton("Match");
+    match.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+        // TODO Auto-generated method stub
+
+      }
+    });
+
+    JButton playCommand = new JButton("Play command");
+    playCommand.addActionListener(new ActionListener()
     {
       @Override
       public void actionPerformed(ActionEvent e)
@@ -105,12 +122,36 @@ public class AlgoSoundGUI extends JFrame
         soundPlayer.playSound();
       }
     });
-    innerPanel.add(play);
-    
-    JButton match = new JButton("Match");
-    innerPanel.add(match);
-    
+
+    JButton playMatched = new JButton("Play matched");
+    playMatched.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        // TODO Auto-generated method stub
+
+      }
+    });
+
+    justifyButtonsAndAdd(innerPanel, record, playCommand, playMatched, match);
+
     panel.add(innerPanel, BorderLayout.EAST);
+  }
+
+  private void justifyButtonsAndAdd(JPanel panel, JButton... buttons)
+  {
+    Dimension dimension = new Dimension(140, 30);
+    Component spacer = Box.createRigidArea(new Dimension(5, 5)); // TODO Don't work FIX it later.
+    for (JButton button : buttons)
+    {
+      button.setMinimumSize(dimension);
+      button.setPreferredSize(dimension);
+      button.setMaximumSize(dimension);
+      button.setSize(dimension);
+      panel.add(button);
+      panel.add(spacer);
+    }
   }
 
   private void initializeMenuBar()
@@ -129,11 +170,11 @@ public class AlgoSoundGUI extends JFrame
     addCommand.setToolTipText("Add command to database.");
     addCommand.addActionListener(new ActionListener()
     {
-
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-
+        AddCommand addCommand = new AddCommand(THIS, algoSound);
+        addCommand.setVisible(true);
       }
     });
     database.add(addCommand);

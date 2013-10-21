@@ -12,16 +12,29 @@ import pl.krakow.v_lo.algosound.gui.AlgoSoundGUI;
  */
 public class AlgoSound
 {
-
+  private Database database;
+  
+  public AlgoSound()
+  {
+    database = new Database();
+  }
+  
+  public Database getDatabase()
+  {
+    return database;
+  }
+  
   public static void main(String[] args)
   {
+    final AlgoSound algoSound = new AlgoSound();
+    
     SwingUtilities.invokeLater(new Runnable()
     {
 
       @Override
       public void run()
       {
-        AlgoSoundGUI algosound = new AlgoSoundGUI();
+        AlgoSoundGUI algosound = new AlgoSoundGUI(algoSound);
         algosound.setVisible(true);
       }
     });
