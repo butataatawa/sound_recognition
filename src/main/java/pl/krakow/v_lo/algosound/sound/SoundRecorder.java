@@ -54,6 +54,7 @@ public class SoundRecorder extends Thread
       e.printStackTrace();
     }
   }
+  
 
   private void setUpRecorder()
   {
