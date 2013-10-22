@@ -20,8 +20,8 @@ public class Matcher
   private Database            database;
   private List<List<Complex>> patternSamples;
   private static final int    matchingSampleSize = 1024;
-  private static final int    THRESHOLD          = 512;
-  private static final int    SAMPLE_THRESHOLD   = 10;
+  private static final int    THRESHOLD          = 3000;
+  private static final double SAMPLE_THRESHOLD   = 0.1;
 
   public Matcher(Command pattern, Database database)
   {
@@ -32,15 +32,17 @@ public class Matcher
 
   public List<MatchedResult> match()
   {
+    System.out.println("Starting matching.");
     List<MatchedResult> result = new ArrayList<MatchedResult>();
     patternSamples = computeSamplesFromCommand(pattern);
     for (Command command : database.getAllCommands())
     {
+      System.out.println("Matching " + command.getName() + "..");
       MatchedResult matchedResult = match(command);
       if (matchedResult.getMatchedSamples() > THRESHOLD)
         result.add(matchedResult);
     }
-    Collections.sort(result);
+    Collections.sort(result, Collections.reverseOrder());
     return result;
   }
 
@@ -63,14 +65,15 @@ public class Matcher
   {
     double meanSquaredError = 0;
     Complex sumOfSquares = new Complex(0);
-    for(int i = 0; i < pattern.size(); ++i)
+    for (int i = 0; i < pattern.size(); ++i)
     {
       Complex textVal = text.get(i);
       Complex patternVal = pattern.get(i);
-      sumOfSquares.add(textVal.subtract(patternVal).pow(2)); //WARNING!!!
+      sumOfSquares = sumOfSquares.add(textVal.subtract(patternVal).pow(2)); // WARNING!!!
     }
     meanSquaredError = sumOfSquares.getReal() / pattern.size();
-    if(meanSquaredError < SAMPLE_THRESHOLD)
+//    System.out.println("MSE " + meanSquaredError);
+    if (meanSquaredError < SAMPLE_THRESHOLD)
       return true;
     return false;
   }
@@ -86,6 +89,7 @@ public class Matcher
       FastFourierTransform fft = new FastFourierTransform(sample);
       fft.transformForward();
       result.add(fft.getResult());
+      idx += matchingSampleSize;
     }
     return result;
   }

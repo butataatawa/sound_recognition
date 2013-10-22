@@ -101,7 +101,6 @@ public class AlgoSoundGUI extends JFrame
       {
         Matcher matcher = new Matcher(new Command(new File("./command.wav")), algoSound.getDatabase());
         List<MatchedResult> matchResults = matcher.match();
-        System.out.println("DUPA");   
         System.out.println(matchResults);
       }
     });
