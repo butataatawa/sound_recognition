@@ -12,7 +12,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import org.apache.commons.math3.complex.Complex;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
