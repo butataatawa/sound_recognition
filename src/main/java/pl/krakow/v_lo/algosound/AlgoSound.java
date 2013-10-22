@@ -34,8 +34,8 @@ public class AlgoSound
       @Override
       public void run()
       {
-        AlgoSoundGUI algosound = new AlgoSoundGUI(algoSound);
-        algosound.setVisible(true);
+        AlgoSoundGUI algoSoundGUI = new AlgoSoundGUI(algoSound);
+        algoSoundGUI.setVisible(true);
       }
     });
   }

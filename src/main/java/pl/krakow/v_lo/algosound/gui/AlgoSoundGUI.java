@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,6 +22,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import pl.krakow.v_lo.algosound.AlgoSound;
+import pl.krakow.v_lo.algosound.Command;
+import pl.krakow.v_lo.algosound.MatchedResult;
+import pl.krakow.v_lo.algosound.Matcher;
 import pl.krakow.v_lo.algosound.sound.SoundPlayer;
 import pl.krakow.v_lo.algosound.sound.SoundRecorder;
 
@@ -95,8 +99,10 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        // TODO Auto-generated method stub
-
+        Matcher matcher = new Matcher(new Command(new File("./command.wav")), algoSound.getDatabase());
+        List<MatchedResult> matchResults = matcher.match();
+        System.out.println("DUPA");   
+        System.out.println(matchResults);
       }
     });
 

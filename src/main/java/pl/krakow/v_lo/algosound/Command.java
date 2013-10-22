@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -22,9 +23,9 @@ import org.apache.commons.math3.complex.Complex;
  */
 public class Command
 {
-  private File               location;
-  private String             name;
-  private ArrayList<Complex> rawData;
+  private File          location;
+  private String        name;
+  private List<Complex> rawData;
 
   public Command(File location)
   {
@@ -68,12 +69,12 @@ public class Command
       byte[] buffer = new byte[2];
       audioInputStream.read(buffer);
       double sample = ((buffer[0] & 0xFF) | (buffer[1] << 8)) / 32768.0; // It's magick. Don't ask.
-      rawData.add(new Complex(sample));
+      rawData.add(new Complex(sample, 0));
     }
     audioInputStream.close();
   }
 
-  public ArrayList<Complex> getRawData()
+  public List<Complex> getRawData()
   {
     return rawData;
   }

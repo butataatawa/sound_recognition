@@ -6,10 +6,11 @@ package pl.krakow.v_lo.algosound.maths;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Vector;
 
 import org.apache.commons.math3.complex.Complex;
 import org.junit.Test;
@@ -26,10 +27,10 @@ public class FastFourierTransformParametrizedTest
 
   public static final double DELTA = 1e-2;
   
-  Vector<Complex> inputData;
-  Vector<Complex> expectedOutput;
+  List<Complex> inputData;
+  List<Complex> expectedOutput;
 
-  public FastFourierTransformParametrizedTest(Vector<Complex> inputData, Vector<Complex> expectedOutput)
+  public FastFourierTransformParametrizedTest(List<Complex> inputData, List<Complex> expectedOutput)
   {
     this.inputData = inputData;
     this.expectedOutput = expectedOutput;
@@ -48,7 +49,7 @@ public class FastFourierTransformParametrizedTest
       String line = scanner.nextLine();
       String[] splitted = line.split("\\|"); 
       
-      Vector<Complex> input = new Vector<Complex>();
+      ArrayList<Complex> input = new ArrayList<Complex>();
       Scanner inputScanner = new Scanner(splitted[0]);
       while(inputScanner.hasNextDouble())
       {
@@ -59,7 +60,7 @@ public class FastFourierTransformParametrizedTest
       inputScanner.close();
       inputData[i][0] = input;
       
-      Vector<Complex> result = new Vector<Complex>();
+      ArrayList<Complex> result = new ArrayList<Complex>();
       Scanner resultScanner = new Scanner(splitted[1]);
       while(resultScanner.hasNextDouble())
       {
@@ -80,7 +81,7 @@ public class FastFourierTransformParametrizedTest
     FastFourierTransform transform = new FastFourierTransform(inputData);
     transform.transformForward();
     transform.transformBackward();
-    Vector<Complex> result = transform.getResult();
+    List<Complex> result = transform.getResult();
     for(int i = 0; i < expectedOutput.size(); ++i)
     {
       assertEquals(inputData.get(i).getReal(), result.get(i).getReal(), DELTA);
@@ -93,7 +94,7 @@ public class FastFourierTransformParametrizedTest
   {
     FastFourierTransform transform = new FastFourierTransform(inputData);
     transform.transformForward();
-    Vector<Complex> result = transform.getResult();
+    List<Complex> result = transform.getResult();
     for(int i = 0; i < result.size(); ++i)
     {
       assertEquals(expectedOutput.get(i).getReal(), result.get(i).getReal(), DELTA);

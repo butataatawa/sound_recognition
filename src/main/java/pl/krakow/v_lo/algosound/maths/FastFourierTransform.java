@@ -3,7 +3,8 @@
  */
 package pl.krakow.v_lo.algosound.maths;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
 
@@ -13,9 +14,9 @@ import org.apache.commons.math3.complex.Complex;
 public class FastFourierTransform
 {
 
-  private Vector<Complex> data;
+  private List<Complex> data;
 
-  public FastFourierTransform(Vector<Complex> data) throws IllegalArgumentException
+  public FastFourierTransform(List<Complex> data) throws IllegalArgumentException
   {
     if (!isPowerOfTwo(data.size()))
       throw new IllegalArgumentException("Input vector size must be a power of two.");
@@ -32,18 +33,21 @@ public class FastFourierTransform
     data = transformRadix2(0, data.size(), 1, true);
   }
 
-  private Vector<Complex> transformRadix2(int startingIdx, int size, int step, boolean reverse)
+  private List<Complex> transformRadix2(int startingIdx, int size, int step, boolean reverse)
   {
-    Vector<Complex> result = new Vector<Complex>();
+    ArrayList<Complex> result = new ArrayList<Complex>(size);
+    for(int i = 0; i < size; ++i)
+    {
+      result.add(new Complex(0));
+    }
     if(size == 1)
     {
-      result.add(data.get(startingIdx));
+      result.set(0, data.get(startingIdx));
     }
     else
     {
-      result.setSize(size);
-      Vector<Complex> resultOfPart1 = transformRadix2(startingIdx, size / 2, step * 2, reverse);
-      Vector<Complex> resultOfpart2 = transformRadix2(startingIdx + step, size / 2, step * 2, reverse);
+      List<Complex> resultOfPart1 = transformRadix2(startingIdx, size / 2, step * 2, reverse);
+      List<Complex> resultOfPart2 = transformRadix2(startingIdx + step, size / 2, step * 2, reverse);
       for(int i = 0; i < resultOfPart1.size(); ++i)
       {
         Complex omega;
@@ -54,8 +58,8 @@ public class FastFourierTransform
         omega = omega.exp();
         
         Complex temp = resultOfPart1.get(i);
-        result.set(i, temp.add(omega.multiply(resultOfpart2.get(i))));
-        result.set(i + size / 2, temp.subtract(omega.multiply(resultOfpart2.get(i))));
+        result.set(i, temp.add(omega.multiply(resultOfPart2.get(i))));
+        result.set(i + size / 2, temp.subtract(omega.multiply(resultOfPart2.get(i))));
         if(reverse)
         {
           result.set(i, result.get(i).divide(2));
@@ -66,7 +70,7 @@ public class FastFourierTransform
     return result;
   }
 
-  public Vector<Complex> getResult()
+  public List<Complex> getResult()
   {
     return data;
   }
