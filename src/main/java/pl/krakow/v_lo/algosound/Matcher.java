@@ -3,13 +3,11 @@
  */
 package pl.krakow.v_lo.algosound;
 
-import java.beans.FeatureDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.fraction.BigFraction;
 
 import pl.krakow.v_lo.algosound.maths.FastFourierTransform;
 
@@ -30,6 +28,11 @@ public class Matcher
     this.pattern = pattern;
     this.database = database;
     patternSamples = new ArrayList<List<Complex>>();
+  }
+  
+  public List<List<Complex>> getPatternSamples()
+  {
+    return patternSamples;
   }
 
   public List<MatchedResult> match()
@@ -92,7 +95,7 @@ public class Matcher
     return false;
   }
 
-  private List<List<Complex>> computeSamplesFromCommand(Command command)
+  public static List<List<Complex>> computeSamplesFromCommand(Command command)
   {
     List<List<Complex>> result = new ArrayList<List<Complex>>();
     List<Complex> rawData = command.getRawData();
