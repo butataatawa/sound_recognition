@@ -26,7 +26,6 @@ import pl.krakow.v_lo.algosound.Command;
 import pl.krakow.v_lo.algosound.Database;
 import pl.krakow.v_lo.algosound.MatchedResult;
 import pl.krakow.v_lo.algosound.Matcher;
-import pl.krakow.v_lo.algosound.SpectrumChart;
 import pl.krakow.v_lo.algosound.sound.SoundPlayer;
 import pl.krakow.v_lo.algosound.sound.SoundRecorder;
 
