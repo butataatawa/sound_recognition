@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 import pl.krakow.v_lo.algosound.AlgoSound;
 import pl.krakow.v_lo.algosound.Command;
+import pl.krakow.v_lo.algosound.Database;
 import pl.krakow.v_lo.algosound.MatchedResult;
 import pl.krakow.v_lo.algosound.Matcher;
 import pl.krakow.v_lo.algosound.sound.SoundPlayer;
@@ -41,10 +42,15 @@ public class AlgoSoundGUI extends JFrame
   private static final Dimension appDimension     = new Dimension(800, 600);
   private final AlgoSoundGUI     THIS             = this;
   private AlgoSound              algoSound;
+  private SoundGraph             patternGraph;
+  private SoundGraph             textGraph;
+  private File                   matchedSound;
+  private Command                matchedCommand;
 
   public AlgoSoundGUI(AlgoSound algoSound)
   {
     this.algoSound = algoSound;
+    matchedSound = new File(Database.getDatabasePath("command.wav"));
     initializeUI();
   }
 
@@ -61,10 +67,27 @@ public class AlgoSoundGUI extends JFrame
     JPanel panel = new JPanel(layout);
     panel.setPreferredSize(appDimension);
 
+    initializeCenter(panel);
     initializeEast(panel);
 
     add(panel);
     pack();
+  }
+
+  private void initializeCenter(JPanel panel)
+  {
+    JPanel innerPanel = new JPanel();
+    BoxLayout boxLayout = new BoxLayout(innerPanel, BoxLayout.Y_AXIS);
+    innerPanel.setLayout(boxLayout);
+
+    patternGraph = new SoundGraph(new Command(new File(Database.getDatabasePath("command.wav"))), "Command",
+        new Dimension(660, 200));
+    innerPanel.add(patternGraph.getChartPanel());
+
+    textGraph = new SoundGraph(new Command(matchedSound), "Matched sound", new Dimension(660, 200));
+    innerPanel.add(textGraph.getChartPanel());
+
+    panel.add(innerPanel, BorderLayout.CENTER);
   }
 
   private void initializeEast(JPanel panel)
@@ -79,7 +102,7 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        SoundRecorder soundRecorder = new SoundRecorder(new File("./command.wav"));
+        SoundRecorder soundRecorder = new SoundRecorder(new File("./databaseAS/command.wav"));
         soundRecorder.startRecording();
         try
         {
@@ -90,6 +113,7 @@ public class AlgoSoundGUI extends JFrame
           Thread.currentThread().interrupt();
         }
         soundRecorder.stopRecording();
+        patternGraph.updateChart(new Command(new File(Database.getDatabasePath("command.wav"))));
       }
     });
 
@@ -99,8 +123,13 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        Matcher matcher = new Matcher(new Command(new File("./command.wav")), algoSound.getDatabase());
+        Matcher matcher = new Matcher(new Command(new File("./databaseAS/command.wav")), algoSound.getDatabase());
         List<MatchedResult> matchResults = matcher.match();
+        if (matchResults.size() > 0)
+        {
+          matchedCommand = new Command(new File(Database.getDatabasePath(matchResults.get(0).getCommand().getName())));
+          textGraph.updateChart(matchedCommand);
+        }
         System.out.println(matchResults);
       }
     });
@@ -111,7 +140,7 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        File soundFile = new File("./command.wav");
+        File soundFile = new File("./databaseAS/command.wav");
         BufferedInputStream sound = null;
         try
         {
@@ -134,8 +163,25 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent e)
       {
-        // TODO Auto-generated method stub
-
+        if(matchedCommand == null)
+        {
+          JOptionPane.showMessageDialog(THIS, "You need to match first");
+          return;
+        }
+        File matchedSound = new File(Database.getDatabasePath(matchedCommand.getName()));
+        BufferedInputStream sound = null;
+        try
+        {
+          FileInputStream tmp = new FileInputStream(matchedSound);
+          sound = new BufferedInputStream(tmp);
+        }
+        catch (FileNotFoundException e1)
+        {
+          JOptionPane.showMessageDialog(THIS, "You need to match first.");
+          return;
+        }
+        SoundPlayer soundPlayer = new SoundPlayer(sound);
+        soundPlayer.playSound();
       }
     });
 

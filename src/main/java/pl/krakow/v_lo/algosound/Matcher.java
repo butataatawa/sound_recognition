@@ -3,11 +3,13 @@
  */
 package pl.krakow.v_lo.algosound;
 
+import java.beans.FeatureDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import pl.krakow.v_lo.algosound.maths.FastFourierTransform;
 
@@ -20,8 +22,8 @@ public class Matcher
   private Database            database;
   private List<List<Complex>> patternSamples;
   private static final int    matchingSampleSize = 1024;
-  private static final int    THRESHOLD          = 3000;
-  private static final double SAMPLE_THRESHOLD   = 0.1;
+  private static final int    THRESHOLD          = 0;
+  private static final double SAMPLE_THRESHOLD   = 0.001F;
 
   public Matcher(Command pattern, Database database)
   {
@@ -37,7 +39,9 @@ public class Matcher
     patternSamples = computeSamplesFromCommand(pattern);
     for (Command command : database.getAllCommands())
     {
-      System.out.println("Matching " + command.getName() + "..");
+      if (command.getName().equals(new String("command.wav")))
+        continue;
+      System.out.println("Matching " + command.getName() + "...");
       MatchedResult matchedResult = match(command);
       if (matchedResult.getMatchedSamples() > THRESHOLD)
         result.add(matchedResult);
@@ -58,6 +62,16 @@ public class Matcher
           result.incrementMatchedSamples();
       }
     }
+//    for(int i = 0; i < patternSamples.size() / 2; ++i)
+//    {
+//      List<Complex> patternSample = patternSamples.get(i);
+//      for(int j = 0; j < textSamples.size() / 2; ++j)
+//      {
+//        List<Complex> textSample = textSamples.get(j);
+//        if(matchSamples(patternSample, textSample))
+//          result.incrementMatchedSamples();
+//      }
+//    }
     return result;
   }
 
@@ -72,7 +86,7 @@ public class Matcher
       sumOfSquares = sumOfSquares.add(textVal.subtract(patternVal).pow(2)); // WARNING!!!
     }
     meanSquaredError = sumOfSquares.getReal() / pattern.size();
-//    System.out.println("MSE " + meanSquaredError);
+    // System.out.println("MSE " + meanSquaredError);
     if (meanSquaredError < SAMPLE_THRESHOLD)
       return true;
     return false;
