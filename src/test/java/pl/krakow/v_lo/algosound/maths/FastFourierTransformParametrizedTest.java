@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.commons.math3.complex.Complex;
@@ -41,6 +42,7 @@ public class FastFourierTransformParametrizedTest
   {
     InputStream in = FastFourierTransform.class.getClassLoader().getResourceAsStream("fftTests.txt");
     Scanner scanner = new Scanner(in);
+    scanner.useLocale(Locale.US);
     final int numberOfTestCases = scanner.nextInt();
     scanner.nextLine();
     Object[][] inputData = new Object[numberOfTestCases][2];
@@ -62,6 +64,7 @@ public class FastFourierTransformParametrizedTest
       
       ArrayList<Complex> result = new ArrayList<Complex>();
       Scanner resultScanner = new Scanner(splitted[1]);
+      resultScanner.useLocale(Locale.US);
       while(resultScanner.hasNextDouble())
       {
         double real = resultScanner.nextDouble();
