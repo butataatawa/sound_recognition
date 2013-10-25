@@ -95,7 +95,12 @@ public class Matcher
     return false;
   }
 
-  public static List<List<Complex>> computeSamplesFromCommand(Command command)
+  private List<List<Complex>> computeSamplesFromCommand(Command command)
+  {
+    return computeSamplesFromCommand(command, matchingSampleSize);
+  }
+  
+  public static List<List<Complex>> computeSamplesFromCommand(Command command, int matchingSampleSize)
   {
     List<List<Complex>> result = new ArrayList<List<Complex>>();
     List<Complex> rawData = command.getRawData();

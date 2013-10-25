@@ -44,8 +44,10 @@ public class AlgoSoundGUI extends JFrame
   private AlgoSound              algoSound;
   private SoundChart             patternGraph;
   private SpectrumChart          patternSpectrum;
+  private ColoredSpectrum        patternColored;
   private SoundChart             matchedGraph;
   private SpectrumChart          matchedSpectrum;
+  private ColoredSpectrum        matchedColored;
   private File                   matchedSound;
   private Command                matchedCommand;
 
@@ -53,6 +55,7 @@ public class AlgoSoundGUI extends JFrame
   {
     this.algoSound = algoSound;
     matchedSound = new File(Database.getDatabasePath("command.wav"));
+    matchedCommand = new Command(matchedSound);
     initializeUI();
   }
 
@@ -82,20 +85,22 @@ public class AlgoSoundGUI extends JFrame
     BoxLayout boxLayout = new BoxLayout(innerPanel, BoxLayout.Y_AXIS);
     innerPanel.setLayout(boxLayout);
     Dimension chartDimension = new Dimension(660, 150);
+    
     Command patternCommand = new Command(new File(Database.getDatabasePath("command.wav")));
     patternGraph = new SoundChart(patternCommand, "Command", chartDimension);
     innerPanel.add(patternGraph.getChartPanel());
-    patternSpectrum = new SpectrumChart("Command spectrum", chartDimension, 
-         patternCommand);
-    innerPanel.add(patternSpectrum.getChartPanel());
+    patternSpectrum = new SpectrumChart("Command spectrum", chartDimension, patternCommand);
+//    innerPanel.add(patternSpectrum.getChartPanel());
+    patternColored = new ColoredSpectrum(chartDimension, patternCommand);
+    innerPanel.add(patternColored);
     
-    matchedGraph = new SoundChart(new Command(matchedSound), "Matched sound", 
-        chartDimension);
+    matchedGraph = new SoundChart(new Command(matchedSound), "Matched sound", chartDimension);
     innerPanel.add(matchedGraph.getChartPanel());
-    matchedSpectrum = new SpectrumChart("Matched sound spectrum", chartDimension,
-         new Command(matchedSound));
-    innerPanel.add(matchedSpectrum.getChartPanel());
-
+    matchedSpectrum = new SpectrumChart("Matched sound spectrum", chartDimension, matchedCommand);
+//    innerPanel.add(matchedSpectrum.getChartPanel());
+    matchedColored = new ColoredSpectrum(chartDimension, matchedCommand);
+    innerPanel.add(matchedColored);
+//    
     panel.add(innerPanel, BorderLayout.CENTER);
   }
 
@@ -125,6 +130,7 @@ public class AlgoSoundGUI extends JFrame
         Command command = new Command(new File(Database.getDatabasePath("command.wav")));
         patternGraph.updateChart(command);
         patternSpectrum.updateChart(command);
+        patternColored.updateSpectrum(command);
       }
     });
 
@@ -138,9 +144,11 @@ public class AlgoSoundGUI extends JFrame
         List<MatchedResult> matchResults = matcher.match();
         if (matchResults.size() > 0)
         {
-          matchedCommand = new Command(new File(Database.getDatabasePath(matchResults.get(0).getCommand().getName())));
+          matchedSound = new File(Database.getDatabasePath(matchResults.get(0).getCommand().getName()));
+          matchedCommand = new Command(matchedSound);
           matchedGraph.updateChart(matchedCommand);
           matchedSpectrum.updateChart(matchedCommand);
+          matchedColored.updateSpectrum(matchedCommand);
         }
         System.out.println(matchResults);
       }

@@ -33,7 +33,7 @@ public class SoundChart
   {
     final JFreeChart chart = ChartFactory.createXYLineChart(
         title,                           // chart title
-        "Time",                          // x axis label
+        "Sample",                        // x axis label
         "Amplitude",                     // y axis label
         dataset,                         // data
         PlotOrientation.VERTICAL, false, // include legend

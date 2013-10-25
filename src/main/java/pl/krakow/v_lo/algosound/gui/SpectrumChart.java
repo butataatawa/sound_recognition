@@ -53,7 +53,7 @@ public class SpectrumChart
     final XYSeries series = new XYSeries("Amplitude - frequency");
     
     int xValue = 0;
-    for(List<Complex> samples : Matcher.computeSamplesFromCommand(command))
+    for(List<Complex> samples : Matcher.computeSamplesFromCommand(command, 512))
     {
       for (Complex yValue : samples)
         series.add(xValue++, yValue.abs());
