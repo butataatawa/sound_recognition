@@ -21,7 +21,7 @@ public class Matcher
   private List<List<Complex>> patternSamples;
   private static final int    matchingSampleSize = 1024;
   private static final int    THRESHOLD          = 0;
-  private static final double SAMPLE_THRESHOLD   = 0.1F;
+  private static final double SAMPLE_THRESHOLD   = 0.01F;
 
   public Matcher(Command pattern, Database database)
   {
@@ -46,11 +46,11 @@ public class Matcher
     {
       if (command.getName().equals("command.wav"))
         continue;
-      System.out.print("Matching " + command.getName() + "...");
+      System.out.println("### Matching " + command.getName() + "...");
       MatchedResult matchedResult = match(command);
       if (matchedResult.getMatchedSamples() > THRESHOLD)
         result.add(matchedResult);
-      System.out.println(" (matched samples: " + matchedResult.getMatchedSamples() + ")");
+      System.out.println("### Matched samples: " + matchedResult.getMatchedSamples());
     }
     Collections.sort(result, Collections.reverseOrder());
     return result;
@@ -62,15 +62,16 @@ public class Matcher
     List<List<Complex>> textSamples = computeSamplesFromCommand(command);
     int matchedSamples;
     // ucinaj wzorzec od przodu i przesuwaj
-    for (int patternBegin = 0; patternBegin < patternSamples.size(); ++patternBegin)
+    for (int patternBegin = 0; patternBegin < 1; ++patternBegin)
       // przesuwaj wzorzec względem porównywanego tekstu (ucinaj tył tekstu)
-      for (int textBegin = 0; textBegin < textSamples.size(); ++textBegin)
+      for (int textBegin = 0; textBegin < textSamples.size() / 4; ++textBegin)
       {
-//        System.out.print("matched samples (" + patternBegin + ", " + textBegin + "): ");
         matchedSamples = matchSamples(patternSamples, patternBegin, textSamples, textBegin);
-//        System.out.println(matchedSamples);
         if(matchedSamples > result.getMatchedSamples())
+        {
+          System.out.println("matched samples (" + patternBegin + ", " + textBegin + "): " + matchedSamples);
           result.setMatchedSamples(matchedSamples);
+        }
       }
     return result;
   }
@@ -79,20 +80,22 @@ public class Matcher
                            List<List<Complex>> textSamples, int textBegin)
   {
     int matchedSamples = 0;
-    double sumOfDiffSquares = 0;
     int pattern_i = patternBegin;
     int text_i = textBegin;
     while(text_i < textSamples.size() && pattern_i < patternSamples.size())
     {
-      sumOfDiffSquares = 0;
+      Complex sumOfDiffSquares = new Complex(0);
       for(int j = 0; j < matchingSampleSize; ++j)
       {
-        double patternVal = patternSamples.get(pattern_i).get(j).getReal();
-        double textVal = textSamples.get(text_i).get(j).getReal();
-        sumOfDiffSquares += Math.pow(patternVal - textVal, 2);
+        Complex textVal = textSamples.get(pattern_i).get(j);
+        Complex patternVal = patternSamples.get(text_i).get(j);
+        sumOfDiffSquares = sumOfDiffSquares.add(textVal.subtract(patternVal).pow(2));
+//        double patternVal = patternSamples.get(pattern_i).get(j).getReal();
+//        double textVal = textSamples.get(text_i).get(j).getReal();
+//        sumOfDiffSquares += Math.pow(patternVal - textVal, 2);
       }
 //      System.out.println(sumOfDiffSquares / matchingSampleSize);
-      if(sumOfDiffSquares / matchingSampleSize < SAMPLE_THRESHOLD)
+      if(sumOfDiffSquares.getReal() / matchingSampleSize < SAMPLE_THRESHOLD)
         ++matchedSamples;
       ++text_i;
       ++pattern_i;
