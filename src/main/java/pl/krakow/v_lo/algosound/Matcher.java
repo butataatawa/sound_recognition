@@ -21,7 +21,7 @@ public class Matcher
   private List<List<Complex>> patternSamples;
   private static final int    matchingSampleSize = 1024;
   private static final int    THRESHOLD          = 0;
-  private static final double SAMPLE_THRESHOLD   = 0.001F;
+  private static final double SAMPLE_THRESHOLD   = 0.1F;
 
   public Matcher(Command pattern, Database database)
   {
@@ -38,16 +38,19 @@ public class Matcher
   public List<MatchedResult> match()
   {
     System.out.println("Starting matching.");
+    
     List<MatchedResult> result = new ArrayList<MatchedResult>();
     patternSamples = computeSamplesFromCommand(pattern);
+    
     for (Command command : database.getAllCommands())
     {
-      if (command.getName().equals(new String("command.wav")))
+      if (command.getName().equals("command.wav"))
         continue;
-      System.out.println("Matching " + command.getName() + "...");
+      System.out.print("Matching " + command.getName() + "...");
       MatchedResult matchedResult = match(command);
       if (matchedResult.getMatchedSamples() > THRESHOLD)
         result.add(matchedResult);
+      System.out.println(" (matched samples: " + matchedResult.getMatchedSamples() + ")");
     }
     Collections.sort(result, Collections.reverseOrder());
     return result;
@@ -57,42 +60,44 @@ public class Matcher
   {
     MatchedResult result = new MatchedResult(command);
     List<List<Complex>> textSamples = computeSamplesFromCommand(command);
-    for (List<Complex> patternSample : patternSamples)
-    {
-      for (List<Complex> textSample : textSamples)
+    int matchedSamples;
+    // ucinaj wzorzec od przodu i przesuwaj
+    for (int patternBegin = 0; patternBegin < patternSamples.size(); ++patternBegin)
+      // przesuwaj wzorzec względem porównywanego tekstu (ucinaj tył tekstu)
+      for (int textBegin = 0; textBegin < textSamples.size(); ++textBegin)
       {
-        if (matchSamples(patternSample, textSample))
-          result.incrementMatchedSamples();
+//        System.out.print("matched samples (" + patternBegin + ", " + textBegin + "): ");
+        matchedSamples = matchSamples(patternSamples, patternBegin, textSamples, textBegin);
+//        System.out.println(matchedSamples);
+        if(matchedSamples > result.getMatchedSamples())
+          result.setMatchedSamples(matchedSamples);
       }
-    }
-//    for(int i = 0; i < patternSamples.size() / 2; ++i)
-//    {
-//      List<Complex> patternSample = patternSamples.get(i);
-//      for(int j = 0; j < textSamples.size() / 2; ++j)
-//      {
-//        List<Complex> textSample = textSamples.get(j);
-//        if(matchSamples(patternSample, textSample))
-//          result.incrementMatchedSamples();
-//      }
-//    }
     return result;
   }
 
-  private boolean matchSamples(List<Complex> pattern, List<Complex> text)
+  private int matchSamples(List<List<Complex>> patternSamples, int patternBegin, 
+                           List<List<Complex>> textSamples, int textBegin)
   {
-    double meanSquaredError = 0;
-    Complex sumOfSquares = new Complex(0);
-    for (int i = 0; i < pattern.size(); ++i)
+    int matchedSamples = 0;
+    double sumOfDiffSquares = 0;
+    int pattern_i = patternBegin;
+    int text_i = textBegin;
+    while(text_i < textSamples.size() && pattern_i < patternSamples.size())
     {
-      Complex textVal = text.get(i);
-      Complex patternVal = pattern.get(i);
-      sumOfSquares = sumOfSquares.add(textVal.subtract(patternVal).pow(2)); // WARNING!!!
+      sumOfDiffSquares = 0;
+      for(int j = 0; j < matchingSampleSize; ++j)
+      {
+        double patternVal = patternSamples.get(pattern_i).get(j).getReal();
+        double textVal = textSamples.get(text_i).get(j).getReal();
+        sumOfDiffSquares += Math.pow(patternVal - textVal, 2);
+      }
+//      System.out.println(sumOfDiffSquares / matchingSampleSize);
+      if(sumOfDiffSquares / matchingSampleSize < SAMPLE_THRESHOLD)
+        ++matchedSamples;
+      ++text_i;
+      ++pattern_i;
     }
-    meanSquaredError = sumOfSquares.getReal() / pattern.size();
-    // System.out.println("MSE " + meanSquaredError);
-    if (meanSquaredError < SAMPLE_THRESHOLD)
-      return true;
-    return false;
+    return matchedSamples;
   }
 
   private List<List<Complex>> computeSamplesFromCommand(Command command)

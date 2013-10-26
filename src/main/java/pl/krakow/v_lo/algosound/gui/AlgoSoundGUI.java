@@ -90,16 +90,16 @@ public class AlgoSoundGUI extends JFrame
     patternGraph = new SoundChart(patternCommand, "Command", chartDimension);
     innerPanel.add(patternGraph.getChartPanel());
     patternSpectrum = new SpectrumChart("Command spectrum", chartDimension, patternCommand);
-//    innerPanel.add(patternSpectrum.getChartPanel());
+    innerPanel.add(patternSpectrum.getChartPanel());
     patternColored = new ColoredSpectrum(chartDimension, patternCommand);
-    innerPanel.add(patternColored);
+//    innerPanel.add(patternColored);
     
     matchedGraph = new SoundChart(new Command(matchedSound), "Matched sound", chartDimension);
     innerPanel.add(matchedGraph.getChartPanel());
     matchedSpectrum = new SpectrumChart("Matched sound spectrum", chartDimension, matchedCommand);
-//    innerPanel.add(matchedSpectrum.getChartPanel());
+    innerPanel.add(matchedSpectrum.getChartPanel());
     matchedColored = new ColoredSpectrum(chartDimension, matchedCommand);
-    innerPanel.add(matchedColored);
+//    innerPanel.add(matchedColored);
 //    
     panel.add(innerPanel, BorderLayout.CENTER);
   }
@@ -116,7 +116,8 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        SoundRecorder soundRecorder = new SoundRecorder(new File("./databaseAS/command.wav"));
+        File commandFile = new File(Database.getDatabasePath("command.wav"));
+        SoundRecorder soundRecorder = new SoundRecorder(commandFile);
         soundRecorder.startRecording();
         try
         {
@@ -127,7 +128,7 @@ public class AlgoSoundGUI extends JFrame
           Thread.currentThread().interrupt();
         }
         soundRecorder.stopRecording();
-        Command command = new Command(new File(Database.getDatabasePath("command.wav")));
+        Command command = new Command(commandFile);
         patternGraph.updateChart(command);
         patternSpectrum.updateChart(command);
         patternColored.updateSpectrum(command);
@@ -140,7 +141,7 @@ public class AlgoSoundGUI extends JFrame
       @Override
       public void actionPerformed(ActionEvent arg0)
       {
-        Matcher matcher = new Matcher(new Command(new File("./databaseAS/command.wav")), algoSound.getDatabase());
+        Matcher matcher = new Matcher(new Command(new File(Database.getDatabasePath("command.wav"))), algoSound.getDatabase());
         List<MatchedResult> matchResults = matcher.match();
         if (matchResults.size() > 0)
         {
