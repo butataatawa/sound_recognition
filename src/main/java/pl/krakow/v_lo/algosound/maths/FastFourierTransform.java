@@ -77,13 +77,7 @@ public class FastFourierTransform
 
   private boolean isPowerOfTwo(int number)
   {
-    while (number % 2 == 0)
-    {
-      number /= 2;
-    }
-    if (number == 1)
-      return true;
-    return false;
+    return ((number & (-number)) == number);
   }
 
 }
