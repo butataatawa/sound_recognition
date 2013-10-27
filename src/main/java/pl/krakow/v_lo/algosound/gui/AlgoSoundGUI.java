@@ -146,10 +146,7 @@ public class AlgoSoundGUI extends JFrame
         if (matchResults.size() > 0)
         {
           matchedSound = new File(Database.getDatabasePath(matchResults.get(0).getCommand().getName()));
-          matchedCommand = new Command(matchedSound);
-          matchedGraph.updateChart(matchedCommand);
-          matchedSpectrum.updateChart(matchedCommand);
-          matchedColored.updateSpectrum(matchedCommand);
+          updateMatched(new Command(matchedSound));
         }
         System.out.println(matchResults);
       }
@@ -250,5 +247,26 @@ public class AlgoSoundGUI extends JFrame
       }
     });
     database.add(addCommand);
+    
+    JMenuItem showCommand = new JMenuItem("Show command");
+    showCommand.setToolTipText("Show charts for selected command instead of matched");
+    showCommand.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+        ShowCommand showCommand = new ShowCommand(THIS, algoSound);
+        showCommand.setVisible(true);
+      }
+    });
+    database.add(showCommand);
+  }
+  
+  public void updateMatched(Command command)
+  {
+    matchedCommand = command;
+    matchedGraph.updateChart(command);
+    matchedSpectrum.updateChart(command);
+    matchedColored.updateSpectrum(command);
   }
 }
