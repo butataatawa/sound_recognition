@@ -36,7 +36,6 @@ import pl.krakow.v_lo.algosound.sound.SoundRecorder;
  */
 public class AlgoSoundGUI extends JFrame
 {
-
   /*
    * No idea what it is used for, but eclipse complains about it.
    */
@@ -333,7 +332,7 @@ public class AlgoSoundGUI extends JFrame
     });
     database.add(showCommand);
   }
-  
+
   public void updateMatched(Command command)
   {
     matchedCommand = command;

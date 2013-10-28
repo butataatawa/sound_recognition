@@ -103,7 +103,7 @@ public class Matcher
   {
     return computeSamplesFromCommand(command, matchingSampleSize);
   }
-  
+
   public static List<List<Complex>> computeSamplesFromCommand(Command command, int matchingSampleSize)
   {
     List<List<Complex>> result = new ArrayList<List<Complex>>();

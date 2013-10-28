@@ -36,11 +36,11 @@ public class FastFourierTransform
   private List<Complex> transformRadix2(int startingIdx, int size, int step, boolean reverse)
   {
     ArrayList<Complex> result = new ArrayList<Complex>(size);
-    for(int i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
       result.add(new Complex(0));
     }
-    if(size == 1)
+    if (size == 1)
     {
       result.set(0, data.get(startingIdx));
     }
@@ -48,19 +48,19 @@ public class FastFourierTransform
     {
       List<Complex> resultOfPart1 = transformRadix2(startingIdx, size / 2, step * 2, reverse);
       List<Complex> resultOfPart2 = transformRadix2(startingIdx + step, size / 2, step * 2, reverse);
-      for(int i = 0; i < resultOfPart1.size(); ++i)
+      for (int i = 0; i < resultOfPart1.size(); ++i)
       {
         Complex omega;
-        if(reverse)
+        if (reverse)
           omega = new Complex(0, (2) * Math.PI * i / size);
         else
           omega = new Complex(0, (-2) * Math.PI * i / size);
         omega = omega.exp();
-        
+
         Complex temp = resultOfPart1.get(i);
         result.set(i, temp.add(omega.multiply(resultOfPart2.get(i))));
         result.set(i + size / 2, temp.subtract(omega.multiply(resultOfPart2.get(i))));
-        if(reverse)
+        if (reverse)
         {
           result.set(i, result.get(i).divide(2));
           result.set(i + size / 2, result.get(i + size / 2).divide(2));
