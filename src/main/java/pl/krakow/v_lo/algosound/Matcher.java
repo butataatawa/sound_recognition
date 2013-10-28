@@ -87,14 +87,10 @@ public class Matcher
       Complex sumOfDiffSquares = new Complex(0);
       for(int j = 0; j < matchingSampleSize; ++j)
       {
-        Complex textVal = textSamples.get(pattern_i).get(j);
-        Complex patternVal = patternSamples.get(text_i).get(j);
+        Complex textVal = textSamples.get(text_i).get(j);
+        Complex patternVal = patternSamples.get(pattern_i).get(j);
         sumOfDiffSquares = sumOfDiffSquares.add(textVal.subtract(patternVal).pow(2));
-//        double patternVal = patternSamples.get(pattern_i).get(j).getReal();
-//        double textVal = textSamples.get(text_i).get(j).getReal();
-//        sumOfDiffSquares += Math.pow(patternVal - textVal, 2);
       }
-//      System.out.println(sumOfDiffSquares / matchingSampleSize);
       if(sumOfDiffSquares.getReal() / matchingSampleSize < SAMPLE_THRESHOLD)
         ++matchedSamples;
       ++text_i;

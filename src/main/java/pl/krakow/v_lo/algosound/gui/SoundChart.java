@@ -66,4 +66,14 @@ public class SoundChart
     JFreeChart chart = createChart(dataset, chartTitle);
     chartPanel.setChart(chart);
   }
+  
+  public void hide()
+  {
+    chartPanel.setVisible(false);
+  }
+  
+  public void unhide()
+  {
+    chartPanel.setVisible(true);
+  }
 }

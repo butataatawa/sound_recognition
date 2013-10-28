@@ -35,7 +35,7 @@ public class ColoredSpectrum extends JPanel
     int x = 0;
     for(List<Double> part : data)
     {
-      int y = sampleSize / numberOfSamplesAverage;
+      int y = sampleSize / numberOfSamplesAverage / 2;
       float val = 0;
       for(int i = 0; i < sampleSize; ++i)
       {
@@ -70,5 +70,15 @@ public class ColoredSpectrum extends JPanel
   public void updateSpectrum(Command command)
   {
     createDataset(command);
+  }
+
+  public void hidePanel()
+  {
+    setVisible(false);
+  }
+  
+  public void unhidePanel()
+  {
+    setVisible(true);
   }
 }

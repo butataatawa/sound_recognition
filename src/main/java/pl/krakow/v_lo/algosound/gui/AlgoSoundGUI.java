@@ -11,9 +11,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -92,15 +94,15 @@ public class AlgoSoundGUI extends JFrame
     patternSpectrum = new SpectrumChart("Command spectrum", chartDimension, patternCommand);
     innerPanel.add(patternSpectrum.getChartPanel());
     patternColored = new ColoredSpectrum(chartDimension, patternCommand);
-//    innerPanel.add(patternColored);
+    innerPanel.add(patternColored);
     
     matchedGraph = new SoundChart(new Command(matchedSound), "Matched sound", chartDimension);
     innerPanel.add(matchedGraph.getChartPanel());
     matchedSpectrum = new SpectrumChart("Matched sound spectrum", chartDimension, matchedCommand);
     innerPanel.add(matchedSpectrum.getChartPanel());
     matchedColored = new ColoredSpectrum(chartDimension, matchedCommand);
-//    innerPanel.add(matchedColored);
-//    
+    innerPanel.add(matchedColored);
+    
     panel.add(innerPanel, BorderLayout.CENTER);
   }
 
@@ -203,11 +205,81 @@ public class AlgoSoundGUI extends JFrame
       }
     });
 
-    justifyButtonsAndAdd(innerPanel, record, playCommand, playMatched, match);
-
+    justifyButtonsAndAdd(innerPanel, record, playCommand, match, playMatched);
+    
+    addCheckboxes(innerPanel);
+    
     panel.add(innerPanel, BorderLayout.EAST);
   }
 
+  private void addCheckboxes(JPanel innerPanel)
+  {
+    innerPanel.add(createChartCheckBox(patternGraph, "Command chart"));
+    innerPanel.add(createSpectrumCheckBox(patternSpectrum, "Command spectrum"));
+    innerPanel.add(createColoredCheckBox(patternColored, "Command colored spectrum"));
+    
+    innerPanel.add(createChartCheckBox(matchedGraph, "Matched chart"));
+    innerPanel.add(createSpectrumCheckBox(matchedSpectrum, "Matched spectrum"));
+    innerPanel.add(createColoredCheckBox(matchedColored, "Matched colored spectrum"));
+  }
+  
+  private JCheckBox  createColoredCheckBox(final ColoredSpectrum spectrum, String text)
+  {
+    JCheckBox spectrumCheckBox = new JCheckBox(text);
+    spectrumCheckBox.setSelected(true);
+    spectrumCheckBox.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent)
+      {
+        AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
+        if(abstractButton.getModel().isSelected())
+          spectrum.unhidePanel();
+        else
+          spectrum.hidePanel();
+      }
+    });
+    return spectrumCheckBox;
+  }
+
+  private JCheckBox createChartCheckBox(final SoundChart chart, String text)
+  {
+    JCheckBox chartCheckBox = new JCheckBox(text);
+    chartCheckBox.setSelected(true);
+    chartCheckBox.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent)
+      {
+        AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
+        if(abstractButton.getModel().isSelected())
+          chart.unhide();
+        else
+          chart.hide();
+      }
+    });
+    return chartCheckBox;
+  }
+
+  private JCheckBox createSpectrumCheckBox(final SpectrumChart chart, String text)
+  {
+    JCheckBox chartCheckBox = new JCheckBox(text);
+    chartCheckBox.setSelected(true);
+    chartCheckBox.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent)
+      {
+        AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
+        if(abstractButton.getModel().isSelected())
+          chart.unhide();
+        else
+          chart.hide();
+      }
+    });
+    return chartCheckBox;
+  }
+  
   private void justifyButtonsAndAdd(JPanel panel, JButton... buttons)
   {
     Dimension dimension = new Dimension(140, 30);
