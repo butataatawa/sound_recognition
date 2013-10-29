@@ -7,14 +7,14 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import org.apache.commons.math3.complex.Complex;
 
 import pl.krakow.v_lo.algosound.Command;
 import pl.krakow.v_lo.algosound.Matcher;
 
-public class ColoredSpectrum extends JPanel
+public class ColoredSpectrum extends JComponent
 {
   private List<List<Double>> data;
   private final int          sampleSize = 1024;
@@ -41,7 +41,7 @@ public class ColoredSpectrum extends JPanel
       for (int i = 0; i < sampleSize; ++i)
       {
         val += part.get(i).floatValue();
-        if (i % numberOfSamplesAverage != 0)
+        if ((i+1) % numberOfSamplesAverage == 0)
         {
           val = Math.min(val, 1f);
           g2d.setColor(new Color(val, val, val));
@@ -73,12 +73,12 @@ public class ColoredSpectrum extends JPanel
     createDataset(command);
   }
 
-  public void hidePanel()
+  public void hideIt()
   {
     setVisible(false);
   }
 
-  public void unhidePanel()
+  public void unhideIt()
   {
     setVisible(true);
   }

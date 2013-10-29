@@ -1,6 +1,7 @@
 package pl.krakow.v_lo.algosound.gui;
 
 import java.awt.Dimension;
+
 import org.apache.commons.math3.complex.Complex;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -12,30 +13,29 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import pl.krakow.v_lo.algosound.Command;
 
-public class SoundChart
+public class SoundChart extends ChartPanel
 {
-  private ChartPanel chartPanel;
   private String     chartTitle;
   
   public SoundChart(Command command, String chartTitle, Dimension dimension)
   {
+    super(null);
     this.chartTitle = chartTitle;
-    XYDataset dataset = createDataset(command);
-    chartPanel = new ChartPanel(createChart(dataset, chartTitle));
-    chartPanel.setPreferredSize(dimension);
-    chartPanel.setMinimumSize(dimension);
-    chartPanel.setMaximumSize(dimension);
-    chartPanel.setSize(dimension);
-    chartPanel.setVisible(true);
+    setChart(createChart(command));
+    setPreferredSize(dimension);
+    setMinimumSize(dimension);
+    setMaximumSize(dimension);
+    setSize(dimension);
+    setVisible(true);
   }
 
-  private JFreeChart createChart(XYDataset dataset, String title)
+  private JFreeChart createChart(Command command)
   {
     final JFreeChart chart = ChartFactory.createXYLineChart(
-        title,                           // chart title
+        chartTitle,                      // chart title
         "Sample",                        // x axis label
         "Amplitude",                     // y axis label
-        dataset,                         // data
+        createDataset(command),          // data
         PlotOrientation.VERTICAL, false, // include legend
         false,                           // tooltips
         false                            // urls
@@ -55,25 +55,18 @@ public class SoundChart
     return new XYSeriesCollection(series);
   }
 
-  public ChartPanel getChartPanel()
-  {
-    return chartPanel;
-  }
-
   public void updateChart(Command command)
   {
-    XYDataset dataset = createDataset(command);
-    JFreeChart chart = createChart(dataset, chartTitle);
-    chartPanel.setChart(chart);
+    setChart(createChart(command));
   }
   
-  public void hide()
+  public void hideIt()
   {
-    chartPanel.setVisible(false);
+    setVisible(false);
   }
   
-  public void unhide()
+  public void unhideIt()
   {
-    chartPanel.setVisible(true);
+    setVisible(true);
   }
 }

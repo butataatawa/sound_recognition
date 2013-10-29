@@ -89,16 +89,16 @@ public class AlgoSoundGUI extends JFrame
     
     Command patternCommand = new Command(new File(Database.getDatabasePath("command.wav")));
     patternGraph = new SoundChart(patternCommand, "Command", chartDimension);
-    innerPanel.add(patternGraph.getChartPanel());
+    innerPanel.add(patternGraph);
     patternSpectrum = new SpectrumChart("Command spectrum", chartDimension, patternCommand);
-    innerPanel.add(patternSpectrum.getChartPanel());
+    innerPanel.add(patternSpectrum);
     patternColored = new ColoredSpectrum(chartDimension, patternCommand);
     innerPanel.add(patternColored);
     
     matchedGraph = new SoundChart(new Command(matchedSound), "Matched sound", chartDimension);
-    innerPanel.add(matchedGraph.getChartPanel());
+    innerPanel.add(matchedGraph);
     matchedSpectrum = new SpectrumChart("Matched sound spectrum", chartDimension, matchedCommand);
-    innerPanel.add(matchedSpectrum.getChartPanel());
+    innerPanel.add(matchedSpectrum);
     matchedColored = new ColoredSpectrum(chartDimension, matchedCommand);
     innerPanel.add(matchedColored);
     
@@ -222,7 +222,7 @@ public class AlgoSoundGUI extends JFrame
     innerPanel.add(createColoredCheckBox(matchedColored, "Matched colored spectrum"));
   }
   
-  private JCheckBox  createColoredCheckBox(final ColoredSpectrum spectrum, String text)
+  private JCheckBox createColoredCheckBox(final ColoredSpectrum spectrum, String text)
   {
     JCheckBox spectrumCheckBox = new JCheckBox(text);
     spectrumCheckBox.setSelected(true);
@@ -233,9 +233,9 @@ public class AlgoSoundGUI extends JFrame
       {
         AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
         if(abstractButton.getModel().isSelected())
-          spectrum.unhidePanel();
+          spectrum.unhideIt();
         else
-          spectrum.hidePanel();
+          spectrum.hideIt();
       }
     });
     return spectrumCheckBox;
@@ -252,9 +252,9 @@ public class AlgoSoundGUI extends JFrame
       {
         AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
         if(abstractButton.getModel().isSelected())
-          chart.unhide();
+          chart.unhideIt();
         else
-          chart.hide();
+          chart.hideIt();
       }
     });
     return chartCheckBox;
@@ -271,9 +271,9 @@ public class AlgoSoundGUI extends JFrame
       {
         AbstractButton abstractButton = (AbstractButton)actionEvent.getSource();
         if(abstractButton.getModel().isSelected())
-          chart.unhide();
+          chart.unhideIt();
         else
-          chart.hide();
+          chart.hideIt();
       }
     });
     return chartCheckBox;
