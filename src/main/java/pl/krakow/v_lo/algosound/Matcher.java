@@ -19,9 +19,9 @@ public class Matcher
   private Command             pattern;
   private Database            database;
   private List<List<Complex>> patternSamples;
-  private static final int    matchingSampleSize = 1024;
+  private static final int    matchingSampleSize = 512;
   private static final int    THRESHOLD          = 0;
-  private static final double SAMPLE_THRESHOLD   = 0.01F;
+  private static final double SAMPLE_THRESHOLD   = 0.001F;
 
   public Matcher(Command pattern, Database database)
   {
@@ -61,10 +61,12 @@ public class Matcher
     MatchedResult result = new MatchedResult(command);
     List<List<Complex>> textSamples = computeSamplesFromCommand(command);
     int matchedSamples;
+    final int patternEnd = 24;
+    final int textEnd = 24;
     // ucinaj wzorzec od przodu i przesuwaj
-    for (int patternBegin = 0; patternBegin < 1; ++patternBegin)
+    for (int patternBegin = 0; patternBegin < patternEnd; ++patternBegin)
       // przesuwaj wzorzec względem porównywanego tekstu (ucinaj tył tekstu)
-      for (int textBegin = 0; textBegin < textSamples.size() / 4; ++textBegin)
+      for (int textBegin = 0; textBegin < textEnd; ++textBegin)
       {
         matchedSamples = matchSamples(patternSamples, patternBegin, textSamples, textBegin);
         if(matchedSamples > result.getMatchedSamples())
@@ -85,13 +87,19 @@ public class Matcher
     while(text_i < textSamples.size() && pattern_i < patternSamples.size())
     {
       Complex sumOfDiffSquares = new Complex(0);
+      double textSum = 0;
+      double patternSum = 0;
       for(int j = 0; j < matchingSampleSize; ++j)
       {
         Complex textVal = textSamples.get(text_i).get(j);
+        textSum += textVal.abs();
         Complex patternVal = patternSamples.get(pattern_i).get(j);
+        patternSum += patternVal.abs();
         sumOfDiffSquares = sumOfDiffSquares.add(textVal.subtract(patternVal).pow(2));
       }
-      if(sumOfDiffSquares.getReal() / matchingSampleSize < SAMPLE_THRESHOLD)
+      double average = sumOfDiffSquares.getReal() / matchingSampleSize;
+      double sumAverage = Math.min(patternSum, textSum) / matchingSampleSize;
+      if(sumAverage > 0.05 && average < SAMPLE_THRESHOLD)
         ++matchedSamples;
       ++text_i;
       ++pattern_i;

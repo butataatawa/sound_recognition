@@ -17,12 +17,14 @@ import pl.krakow.v_lo.algosound.Matcher;
 public class ColoredSpectrum extends JComponent
 {
   private List<List<Double>> data;
-  private final int          sampleSize = 1024;
+  private final int          sampleSize = 512;
 
   public ColoredSpectrum(Dimension dimension, Command command)
   {
     createDataset(command);
     setSize(dimension);
+    repaint();
+    setVisible(true);
   }
 
   @Override
@@ -30,7 +32,7 @@ public class ColoredSpectrum extends JComponent
   {
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D) g;
-    final int width = 6;
+    final int width = 3;
     final int height = 1;
     final int numberOfSamplesAverage = 2;
     int x = 0;
@@ -65,12 +67,12 @@ public class ColoredSpectrum extends JComponent
         data.get(i).add(yValue.abs());
       ++i;
     }
-    updateUI();
   }
 
   public void updateSpectrum(Command command)
   {
     createDataset(command);
+    repaint();
   }
 
   public void hideIt()

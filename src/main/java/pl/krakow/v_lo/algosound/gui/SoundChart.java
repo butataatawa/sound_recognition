@@ -34,7 +34,7 @@ public class SoundChart extends ChartPanel
     final JFreeChart chart = ChartFactory.createXYLineChart(
         chartTitle,                      // chart title
         "Sample",                        // x axis label
-        "Amplitude",                     // y axis label
+        "Value",                         // y axis label
         createDataset(command),          // data
         PlotOrientation.VERTICAL, false, // include legend
         false,                           // tooltips
