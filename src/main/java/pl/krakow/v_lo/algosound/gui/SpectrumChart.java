@@ -51,7 +51,7 @@ public class SpectrumChart extends ChartPanel
     final XYSeries series = new XYSeries("Amplitude - frequency");
     
     int xValue = 0;
-    for(List<Complex> samples : Matcher.computeSamplesFromCommand(command, 512))
+    for(List<Complex> samples : Matcher.computeSamplesFromCommand(command))
     {
       for (Complex yValue : samples)
         series.add(xValue++, yValue.abs());

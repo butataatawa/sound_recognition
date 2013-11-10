@@ -9,17 +9,17 @@ package pl.krakow.v_lo.algosound;
 public class MatchedResult implements Comparable<MatchedResult>
 {
   private Command command;
-  private int     matchedSamples;
+  private double  matchingRate;
 
   public MatchedResult(Command command)
   {
     this.command = command;
   }
   
-  public MatchedResult(Command command, int matchedSamples)
+  public MatchedResult(Command command, double matchingRate)
   {
     this.command = command;
-    this.matchedSamples = matchedSamples;
+    this.matchingRate = matchingRate;
   }
 
   public Command getCommand()
@@ -27,30 +27,25 @@ public class MatchedResult implements Comparable<MatchedResult>
     return command;
   }
 
-  public int getMatchedSamples()
+  public double getMatchingRate()
   {
-    return matchedSamples;
+    return matchingRate;
   }
   
-  public void setMatchedSamples(int matchedSamples)
+  public void setMatchingRate(double matchingRate)
   {
-    this.matchedSamples = matchedSamples;
-  }
-  
-  public void incrementMatchedSamples()
-  {
-    matchedSamples++;
+    this.matchingRate = matchingRate;
   }
 
   @Override
   public int compareTo(MatchedResult o)
   {
-    return matchedSamples - o.getMatchedSamples();
+    return (int) matchingRate - (int) o.getMatchingRate();
   }
 
   @Override
   public String toString()
   {
-    return "MatchedResult [command=" + command + ", matchedSamples=" + matchedSamples + "]";
+    return "MatchedResult [command=" + command + ", matchingRate=" + matchingRate + "]";
   }
 }

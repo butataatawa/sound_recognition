@@ -17,7 +17,7 @@ import pl.krakow.v_lo.algosound.Matcher;
 public class ColoredSpectrum extends JComponent
 {
   private List<List<Double>> data;
-  private final int          sampleSize = 512;
+  private final int          sampleSize = 1024;
 
   public ColoredSpectrum(Dimension dimension, Command command)
   {
@@ -60,7 +60,7 @@ public class ColoredSpectrum extends JComponent
   {
     data = new ArrayList<List<Double>>();
     int i = 0;
-    for (List<Complex> samples : Matcher.computeSamplesFromCommand(command, sampleSize))
+    for (List<Complex> samples : Matcher.computeSamplesFromCommand(command))
     {
       data.add(new ArrayList<Double>());
       for (Complex yValue : samples)

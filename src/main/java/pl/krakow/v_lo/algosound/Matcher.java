@@ -19,9 +19,7 @@ public class Matcher
   private Command             pattern;
   private Database            database;
   private List<List<Complex>> patternSamples;
-  private static final int    matchingSampleSize = 512;
-  private static final int    THRESHOLD          = 0;
-  private static final double SAMPLE_THRESHOLD   = 0.001F;
+  private static final int    matchingSampleSize = 1024;
 
   public Matcher(Command pattern, Database database)
   {
@@ -46,68 +44,61 @@ public class Matcher
     {
       if (command.getName().equals("command.wav"))
         continue;
+      
       System.out.println("### Matching " + command.getName() + "...");
+      
       MatchedResult matchedResult = match(command);
-      if (matchedResult.getMatchedSamples() > THRESHOLD)
-        result.add(matchedResult);
-      System.out.println("### Matched samples: " + matchedResult.getMatchedSamples());
+      result.add(matchedResult);
+      
+      System.out.println("### Matching rate: " + matchedResult.getMatchingRate());
     }
-    Collections.sort(result, Collections.reverseOrder());
+    Collections.sort(result);
     return result;
   }
 
   private MatchedResult match(Command command)
   {
-    MatchedResult result = new MatchedResult(command);
+    MatchedResult result = new MatchedResult(command, 1e60);
     List<List<Complex>> textSamples = computeSamplesFromCommand(command);
-    int matchedSamples;
-    final int patternEnd = 24;
-    final int textEnd = 24;
+    double matchingRate = 0;
+    final int patternEnd = 8;
+    final int textEnd = 8;
     // ucinaj wzorzec od przodu i przesuwaj
     for (int patternBegin = 0; patternBegin < patternEnd; ++patternBegin)
       // przesuwaj wzorzec względem porównywanego tekstu (ucinaj tył tekstu)
       for (int textBegin = 0; textBegin < textEnd; ++textBegin)
       {
-        matchedSamples = matchSamples(patternSamples, patternBegin, textSamples, textBegin);
-        if(matchedSamples > result.getMatchedSamples())
+        matchingRate = matchSamples(patternSamples, patternBegin, textSamples, textBegin);
+        if(matchingRate < result.getMatchingRate())
         {
-          System.out.println("matched samples (" + patternBegin + ", " + textBegin + "): " + matchedSamples);
-          result.setMatchedSamples(matchedSamples);
+          System.out.println("matching rate (" + patternBegin + ", " + textBegin + "): " + matchingRate);
+          result.setMatchingRate(matchingRate);
         }
       }
     return result;
   }
 
-  private int matchSamples(List<List<Complex>> patternSamples, int patternBegin, 
+  private double matchSamples(List<List<Complex>> patternSamples, int patternBegin, 
                            List<List<Complex>> textSamples, int textBegin)
   {
-    int matchedSamples = 0;
+    double matchingRate = 0;
     int pattern_i = patternBegin;
     int text_i = textBegin;
     while(text_i < textSamples.size() && pattern_i < patternSamples.size())
     {
-      Complex sumOfDiffSquares = new Complex(0);
-      double textSum = 0;
-      double patternSum = 0;
       for(int j = 0; j < matchingSampleSize; ++j)
       {
-        Complex textVal = textSamples.get(text_i).get(j);
-        textSum += textVal.abs();
-        Complex patternVal = patternSamples.get(pattern_i).get(j);
-        patternSum += patternVal.abs();
-        sumOfDiffSquares = sumOfDiffSquares.add(textVal.subtract(patternVal).pow(2));
+        double textVal = textSamples.get(text_i).get(j).abs();
+        double patternVal = patternSamples.get(pattern_i).get(j).abs();
+        matchingRate += Math.pow((textVal - patternVal), 2);
       }
-      double average = sumOfDiffSquares.getReal() / matchingSampleSize;
-      double sumAverage = Math.min(patternSum, textSum) / matchingSampleSize;
-      if(sumAverage > 0.05 && average < SAMPLE_THRESHOLD)
-        ++matchedSamples;
       ++text_i;
       ++pattern_i;
     }
-    return matchedSamples;
+    return matchingRate;
   }
 
-  private List<List<Complex>> computeSamplesFromCommand(Command command)
+  public static List<List<Complex>> computeSamplesFromCommand(Command command)
   {
     return computeSamplesFromCommand(command, matchingSampleSize);
   }
