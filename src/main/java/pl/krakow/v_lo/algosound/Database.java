@@ -3,24 +3,17 @@
  */
 package pl.krakow.v_lo.algosound;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
 import org.apache.commons.math3.complex.Complex;
 
@@ -30,20 +23,17 @@ import org.apache.commons.math3.complex.Complex;
 public class Database
 {
   File       databaseDir;
-  File       rawCommandDir;
   File       propertiesFile;
   Properties properties;
 
   public Database()
   {
     databaseDir = new File("./.algosound");
-    rawCommandDir = new File(databaseDir, "rawCommand");
     propertiesFile = new File(databaseDir, "database.properties");
     properties = new Properties();
     if (!databaseDir.exists())
     {
       databaseDir.mkdir();
-      rawCommandDir.mkdir();
       initProperties();
     }
     try
@@ -74,11 +64,11 @@ public class Database
     }
   }
 
-  public void saveRawCommand(String name, ByteArrayOutputStream stream)
+  public void saveRawCommandBytes(String name, ByteArrayOutputStream stream)
   {
     if(!name.endsWith(".wav"))
       name += ".wav";
-    File newCommandFile = new File(rawCommandDir, name);
+    File newCommandFile = new File(databaseDir, name);
     try
     {
       FileOutputStream newCommandStream = new FileOutputStream(newCommandFile);
@@ -93,12 +83,10 @@ public class Database
   
   public void saveCommand(Command command, String sufix) throws IOException
   {
-    File saveFile = new File(command.getLocation().getParentFile(), command.getLocation().getName() + sufix);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     List<Complex> commandData = command.getData();
     for(Complex complex : commandData)
     {
-      //TODO UPEWNIĆ SIĘ ŻE TO DZIAŁA
       double sample = complex.abs();
       short test = (short) sample;
       ByteBuffer bb = ByteBuffer.allocate(2);
@@ -106,16 +94,12 @@ public class Database
       bb.putShort(test);
       outputStream.write(bb.array());
     }
-    InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-    AudioFileFormat.Type audioType = AudioFileFormat.Type.WAVE;
-    AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0F, 16, 1, 2, 44100.0F, false);
-    AudioInputStream audioInputStream = new AudioInputStream(inputStream, audioFormat, outputStream.size());
-    AudioSystem.write(audioInputStream, audioType, saveFile);
+    saveRawCommandBytes(command.getName() + sufix, outputStream);
   }
   
   public void saveCurrentCommand(ByteArrayOutputStream stream)
   {
-    saveRawCommand("command", stream);
+    saveRawCommandBytes("command", stream);
   }
 
   public ArrayList<Command> getAllCommands()
@@ -137,15 +121,10 @@ public class Database
     }
     return result;
   }
-
-  public boolean isNameAvailable(String name)
+  
+  public Command getCommand(String commandName)
   {
-    File file = new File(getDatabasePath(name));
-    return !file.exists();
-  }
-
-  public static String getDatabasePath(String name)
-  {
-    return "./databaseAS/" + name;
+    File commandFile = new File(databaseDir, commandName + ".wav");
+    return new Command(commandFile);
   }
 }

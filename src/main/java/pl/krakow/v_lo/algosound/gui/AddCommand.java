@@ -80,11 +80,11 @@ public class AddCommand extends JFrame
           JOptionPane.showMessageDialog(THIS, "You need to specify name of the command first.");
           return;
         }
-        if (!algoSound.getDatabase().isNameAvailable(commandName))
-        {
-          JOptionPane.showMessageDialog(THIS, "Command already exists. Choose other name.");
-          return;
-        }
+//        if (!algoSound.getDatabase().isNameAvailable(commandName))
+//        {
+//          JOptionPane.showMessageDialog(THIS, "Command already exists. Choose other name.");
+//          return;
+//        }
         SoundRecorder soundRecorder = new SoundRecorder();
         soundRecorder.startRecording();
         try
@@ -104,7 +104,7 @@ public class AddCommand extends JFrame
         {
           e.printStackTrace();
         }
-        algoSound.getDatabase().saveRawCommand(commandName, recorded);
+        algoSound.getDatabase().saveRawCommandBytes(commandName, recorded);
         THIS.setVisible(false);
         THIS.dispose();
       }
