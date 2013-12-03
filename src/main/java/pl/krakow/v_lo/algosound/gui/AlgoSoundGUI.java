@@ -6,9 +6,11 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.AbstractButton;
@@ -118,7 +120,7 @@ public class AlgoSoundGUI extends JFrame
       public void actionPerformed(ActionEvent arg0)
       {
         File commandFile = new File(Database.getDatabasePath("command.wav"));
-        SoundRecorder soundRecorder = new SoundRecorder(commandFile);
+        SoundRecorder soundRecorder = new SoundRecorder();
         soundRecorder.startRecording();
         try
         {
@@ -128,7 +130,17 @@ public class AlgoSoundGUI extends JFrame
         {
           Thread.currentThread().interrupt();
         }
-        soundRecorder.stopRecording();
+        ByteArrayOutputStream recorded = null;
+        try
+        {
+          recorded = soundRecorder.stopRecording();
+        }
+        catch (IOException e)
+        {
+          e.printStackTrace();
+        }
+        algoSound.getDatabase().saveCurrentCommand(recorded);
+        
         Command command = new Command(commandFile);
         patternGraph.updateChart(command);
         patternSpectrum.updateChart(command);

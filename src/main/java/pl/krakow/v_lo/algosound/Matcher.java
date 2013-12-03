@@ -106,7 +106,7 @@ public class Matcher
   public static List<List<Complex>> computeSamplesFromCommand(Command command, int matchingSampleSize)
   {
     List<List<Complex>> result = new ArrayList<List<Complex>>();
-    List<Complex> rawData = command.getRawData();
+    List<Complex> rawData = command.getData();
     int idx = 0;
     while (idx + matchingSampleSize - 1 < rawData.size())
     {

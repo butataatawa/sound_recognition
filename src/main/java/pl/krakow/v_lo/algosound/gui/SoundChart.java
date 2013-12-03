@@ -49,7 +49,7 @@ public class SoundChart extends ChartPanel
     final XYSeries series = new XYSeries("Amplitude - time");
 
     int xValue = 0;
-    for (Complex yValue : command.getRawData())
+    for (Complex yValue : command.getData())
       series.add(xValue++, yValue.getReal());
 
     return new XYSeriesCollection(series);

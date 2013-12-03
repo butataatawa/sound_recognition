@@ -13,10 +13,12 @@ import pl.krakow.v_lo.algosound.gui.AlgoSoundGUI;
 public class AlgoSound
 {
   private Database database;
+  private CommandManager commandManager;
   
   public AlgoSound()
   {
     database = new Database();
+    commandManager = new CommandManager(database);
   }
   
   public Database getDatabase()
