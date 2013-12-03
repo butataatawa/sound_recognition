@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -101,6 +102,7 @@ public class Database
       double sample = complex.abs();
       short test = (short) sample;
       ByteBuffer bb = ByteBuffer.allocate(2);
+      bb.order(ByteOrder.LITTLE_ENDIAN);
       bb.putShort(test);
       outputStream.write(bb.array());
     }
